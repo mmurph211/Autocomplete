@@ -1,0 +1,45 @@
+/*
+ Autocomplete
+ MIT-style license. Copyright 2012 Matt V. Murphy
+*/
+.aListCon {
+	/* Used to wrap and hide <datalist> elements */
+	display : none;
+}
+.aWrapper {
+	/* Attaches to DOM nearby input element, holds the absolutely positioned list container */
+	position : relative;
+	display : inline-block;
+	*display : inline;
+	zoom : 1;
+	width : 0px;
+	height : 0px;
+	vertical-align : top;
+	overflow : visible;
+}
+.aCon {
+	/* List container */
+	position : absolute;
+	z-index : 999999;
+	top : 0px;
+	left : 0px;
+	display : block;
+}
+.aList {
+	/* List of autocomplete choices */
+	display : block;
+	margin : 0px;
+	padding : 0px;
+	border : 1px solid #7f9db9;
+	background-color : #fff;
+	color : #1a2731;
+	list-style-type : none;
+	cursor : default;
+}
+.aLim {
+	/* List item choice */
+	display : block;
+	padding : 3px 6px 2px 6px;
+	line-height : 1.2em;
+	white-space : nowrap;
+}
