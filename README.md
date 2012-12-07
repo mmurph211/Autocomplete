@@ -1,7 +1,7 @@
 Autocomplete
 ============
 
-Cross browser autocomplete implementation using HTML5's <datalist> element.
+Cross browser autocomplete implementation using HTML5's &lt;datalist&gt; element.
 
 Demo
 ----
@@ -13,7 +13,7 @@ Features
 
 * Cross browser compatible (Chrome, Firefox, Safari, Opera, Internet Explorer 7+)
 * Framework independent - Works with jQuery, Mootools, etc.
-* Works with HTML5's <datalist> element
+* Works with HTML5's &lt;datalist&gt; element
 * Add and remove autocomplete suggestions on the fly
 * Accepts an array or XML as input or retrieves from DOM
 * Touch friendly
