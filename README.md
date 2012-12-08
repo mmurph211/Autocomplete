@@ -52,7 +52,7 @@ required:
     <input id="myInput" type="text" list="myDatalist">
     <div class="aListCon">
         <datalist id="myDatalist">
-            <!--[if IE 9]><select><![endif]-->
+            <!--[if IE 9]><select disabled><![endif]-->
             <option value="example 1">
             <option value="example 2">
             <option value="example 3">
