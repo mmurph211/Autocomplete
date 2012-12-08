@@ -95,6 +95,16 @@ Boolean. Whether or not to use the browser's native autocomplete interface. This
 `srcType` is not `"dom"` or the `datalist` element is not natively supported by the browser.  
 Default is `true`.
 
+**offsetTop**
+Integer. If the autocomplete dropdown is not displaying directly under the `input` field, adjust this 
+option to change the dropdown's vertical position. Negative integers also accepted.  
+Default is `0`.
+
+**offsetLeft**
+Integer. If the autocomplete dropdown is not displaying directly aligned with the `input` field, adjust 
+this option to change the dropdown's horizontal position. Negative integers also accepted.  
+Default is `0`.
+
 **highlightColor**  
 String. The color value to set as the text color for highlighted autocomplete values. If a browser is using 
 its native autocomplete interface, this option is ignored.  

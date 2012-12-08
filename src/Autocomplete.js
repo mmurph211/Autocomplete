@@ -22,6 +22,8 @@
 				this.values = [];
 				this.options = {
 					useNativeInterface : true, 
+					offsetTop : 0, 
+					offsetLeft : 0, 
 					highlightColor : "#ffffff", 
 					highlightBgColor : "#3399ff", 
 					srcType : "", // "array", "dom", "xml"
@@ -151,7 +153,7 @@
 	Autocomplete.prototype.generateContainer = function() {
 		var wrapper = document.createElement("div"), 
 		    container = (this.container = document.createElement("div")), 
-		    eStyle, wDisplay;
+		    cStyle, eStyle, wDisplay;
 		
 		// Get element display style and use it for the wrapper display:
 		if ((eStyle = window.getComputedStyle) && (eStyle = eStyle(this.element, null))) {
@@ -174,8 +176,9 @@
 			addEvent(container, "touchstart", bind(this.highlightValue, this));
 			addEvent(container, "touchend", bind(this.selectValue, this));
 		}
-		container.style.minWidth = this.element.offsetWidth + "px";
-		container.style.marginTop = this.element.offsetHeight + "px";
+		(cStyle = container.style).minWidth = this.element.offsetWidth + "px";
+		cStyle.marginLeft = this.options.offsetLeft + "px";
+		cStyle.marginTop = (this.element.offsetHeight + this.options.offsetTop) + "px";
 		
 		// Initialize wrapper and insert into DOM:
 		wrapper.className = "aWrapper";
@@ -209,7 +212,7 @@
 	//////////////////////////////////////////////////////////////////////////////////
 	Autocomplete.prototype.toggleSelectionChangeEvent = function(event) {
 		// Used by MSIE 9 to fill missing parts of oninput event implementation:
-		if (((event || window.event).type || "").toLowerCase() === "focus") {
+		if (event.type === "focus") {
 			addEvent(document, "selectionchange", this.boundCheckValue);
 		} else {
 			removeEvent(document, "selectionchange", this.boundCheckValue);
