@@ -27,7 +27,8 @@
 					highlightColor : "#ffffff", 
 					highlightBgColor : "#3399ff", 
 					srcType : "", // "array", "dom", "xml"
-					srcData : ""
+					srcData : "", 
+					onInput : this.nothing
 				};
 				
 				if (options) {
@@ -44,6 +45,9 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
+	Autocomplete.prototype.nothing = function(){};
+	
+	//////////////////////////////////////////////////////////////////////////////////
 	Autocomplete.prototype.init = function() {
 		var srcType = this.options.srcType, 
 		    datalist, datalistId, boundSetElementFocus;
@@ -55,6 +59,9 @@
 		
 		// Get datalist element, set it's innerHTML if source type not "dom":
 		if (datalistSupported && this.options.useNativeInterface) {
+			if (this.options.onInput !== this.nothing) {
+				addEvent(this.element, "input", bind(this.trackInputChanges, this));
+			}
 			return this.setDatalist();
 		}
 		
@@ -107,6 +114,16 @@
 		}
 		
 		return values;
+	};
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	Autocomplete.prototype.trackInputChanges = function(event) {
+		var newValue = this.element.value;
+		
+		if (newValue !== this.lastValue) {
+			this.options.onInput(newValue, this.lastValue);
+			this.lastValue = newValue;
+		}
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
@@ -231,9 +248,10 @@
 	Autocomplete.prototype.checkValue = function(event) {
 		var escapeRgx, matchResult, matchRgx, matchText, results, 
 		    newValue = this.element.value, 
+		    lastValue = this.lastValue, 
 		    matches = [], m = 0;
 		
-		if (newValue !== this.lastValue) {
+		if (newValue !== lastValue) {
 			if (newValue) {
 				if (!(results = this.cache["r-" + newValue])) {
 					// Find all matching values:
@@ -254,6 +272,7 @@
 			} else {
 				this.clearValues();
 			}
+			this.options.onInput(newValue, lastValue);
 			this.lastValue = newValue;
 		}
 	};
@@ -406,8 +425,11 @@
 				}
 			}
 			
-			if (c > cLen && datalistSupported && this.options.useNativeInterface) {
-				this.container.innerHTML = this.generateDatalistOptionsHtml();
+			if (c > cLen) {
+				this.cache = {};
+				if (datalistSupported && this.options.useNativeInterface) {
+					this.container.innerHTML = this.generateDatalistOptionsHtml();
+				}
 			}
 		}
 	};
@@ -424,8 +446,11 @@
 				}
 			}
 			
-			if (currentValues.length < cLen && datalistSupported && this.options.useNativeInterface) {
-				this.container.innerHTML = this.generateDatalistOptionsHtml();
+			if (currentValues.length < cLen) {
+				this.cache = {};
+				if (datalistSupported && this.options.useNativeInterface) {
+					this.container.innerHTML = this.generateDatalistOptionsHtml();
+				}
 			}
 		}
 	};

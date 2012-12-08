@@ -97,12 +97,14 @@ Default is `true`.
 
 **offsetTop**
 Integer. If the autocomplete dropdown is not displaying directly under the `input` field, adjust this 
-option to change the dropdown's vertical position. Negative integers also accepted.  
+option to change the dropdown's vertical position. Negative integers also accepted. If a browser is using 
+its native autocomplete interface, this option is ignored.  
 Default is `0`.
 
 **offsetLeft**
 Integer. If the autocomplete dropdown is not displaying directly aligned with the `input` field, adjust 
-this option to change the dropdown's horizontal position. Negative integers also accepted.  
+this option to change the dropdown's horizontal position. Negative integers also accepted. If a browser is 
+using its native autocomplete interface, this option is ignored.  
 Default is `0`.
 
 **highlightColor**  
@@ -114,6 +116,11 @@ Default is `"#ffffff"`.
 String. The color value to set as the background color for highlighted autocomplete values. If a browser is 
 using its native autocomplete interface, this option is ignored.  
 Default is `"#3399ff"`.
+
+**onInput**
+Function. Called when user changes the text field value. Returned in `arguments` are the new value and last 
+value prior to the change.  
+Default is a function that does nothing.
 
 Future Features
 ---------------
