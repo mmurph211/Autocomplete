@@ -90,7 +90,6 @@
 		    option, i, v, 
 		    values = [];
 		
-		values = [];
 		for (i=0, v=0; option=options[i]; i++) {
 			if ((option = option.value) !== undefined) {
 				values[v++] = option;
