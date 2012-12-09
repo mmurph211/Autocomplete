@@ -16,6 +16,7 @@ Features
 * Works with HTML5's &lt;datalist&gt; element
 * Add and remove autocomplete suggestions on the fly
 * Accepts an array or XML as input or retrieves from DOM
+* Supports dynamic choice populating via Ajax
 * Touch friendly
 
 Installation

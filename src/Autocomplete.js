@@ -277,7 +277,7 @@
 	//////////////////////////////////////////////////////////////////////////////////
 	Autocomplete.prototype.performKeyAction = function(event) {
 		var which = (event = event || window.event).which || event.keyCode, 
-		    actionable = { 9 : 1, 13 : 1, 38 : 1, 40 : 1 }, 
+		    actionable = { 9 : 1, 13 : 1, 27 : 1, 38 : 1, 40 : 1 }, 
 		    container, shownValuesLen;
 		
 		if (actionable[which]) {
@@ -290,6 +290,10 @@
 				} else {
 					this.clearValues();
 				}
+				
+			// ESC key:
+			} else if (which === 27) {
+				this.clearValues();
 				
 			// DOWN or UP key:
 			} else {
