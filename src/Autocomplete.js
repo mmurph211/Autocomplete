@@ -10,7 +10,7 @@
 	var Autocomplete = function(element, options) {
 		if ((this.element = (typeof(element) === "string") ? $(element) : element)) {
 			if ((this.element.tagName || "").toLowerCase() === "input") {
-				this.boundCheckValue = null;
+				this.boundCheckValue = bind(this.checkValue, this);
 				this.cache = {};
 				this.container = null;
 				this.elementHasFocus = false;
@@ -60,7 +60,7 @@
 		// Get datalist element, set it's innerHTML if source type not "dom":
 		if (datalistSupported && this.options.useNativeInterface) {
 			if (this.options.onInput !== this.nothing) {
-				addEvent(this.element, "input", bind(this.trackInputChanges, this));
+				addEvent(this.element, "input", this.boundCheckValue);
 			}
 			return this.setDatalist();
 		}
@@ -114,16 +114,6 @@
 		}
 		
 		return values;
-	};
-	
-	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.trackInputChanges = function(event) {
-		var newValue = this.element.value;
-		
-		if (newValue !== this.lastValue) {
-			this.options.onInput(newValue, this.lastValue);
-			this.lastValue = newValue;
-		}
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +199,6 @@
 		var boundToggleSelectionChangeEvent;
 		
 		// Monitor the text field value as it changes:
-		this.boundCheckValue = bind(this.checkValue, this);
 		if (msie === undefined || msie >= 9) {
 			addEvent(this.element, "input", this.boundCheckValue);
 			if (msie === 9) {
@@ -246,25 +235,35 @@
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	Autocomplete.prototype.checkValue = function(event) {
-		var escapeRgx, matchResult, matchRgx, matchText, results, 
-		    newValue = this.element.value, 
-		    lastValue = this.lastValue, 
-		    matches = [], m = 0;
+		var newValue = this.element.value, 
+		    lastValue = this.lastValue;
 		
 		if (newValue !== lastValue) {
-			if (newValue) {
-				if (!(results = this.cache["r-" + newValue])) {
+			this.matchValue(newValue);
+			this.options.onInput.apply(this, [newValue, lastValue]);
+			this.lastValue = newValue;
+		}
+	};
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	Autocomplete.prototype.matchValue = function(val) {
+		var escapeRgx, matchResult, matchRgx, matchText, results, 
+		    matches = [], m = 0;
+		
+		if (!datalistSupported || !this.options.useNativeInterface) {
+			if (val) {
+				if (!(results = this.cache["r-" + val])) {
 					// Find all matching values:
 					escapeRgx = this.cache.escapeRgx || (this.cache.escapeRgx = /([-.*+?^${}()|[\]\/\\])/g);
-					matchRgx = new RegExp("^(" + newValue.replace(escapeRgx, "\\$1") + ".*)$", "igm");
+					matchRgx = new RegExp("^(" + val.replace(escapeRgx, "\\$1") + ".*)$", "igm");
 					matchText = this.cache.values || (this.cache.values = this.values.join("\n"));
 					
 					while ((matchResult = (matchRgx.exec(matchText) || [])[0])) {
-						if (newValue !== matchResult) {
+						if (val !== matchResult) {
 							matches[m++] = matchResult;
 						}
 					}
-					results = (this.cache["r-" + newValue] = matches.sort().slice(0, Math.min(6, matches.length)));
+					results = (this.cache["r-" + val] = matches.sort().slice(0, 6));
 				}
 			}
 			if (results && results.length) {
@@ -272,8 +271,6 @@
 			} else {
 				this.clearValues();
 			}
-			this.options.onInput(newValue, lastValue);
-			this.lastValue = newValue;
 		}
 	};
 	
@@ -426,10 +423,7 @@
 			}
 			
 			if (c > cLen) {
-				this.cache = {};
-				if (datalistSupported && this.options.useNativeInterface) {
-					this.container.innerHTML = this.generateDatalistOptionsHtml();
-				}
+				this.refresh();
 			}
 		}
 	};
@@ -447,11 +441,19 @@
 			}
 			
 			if (currentValues.length < cLen) {
-				this.cache = {};
-				if (datalistSupported && this.options.useNativeInterface) {
-					this.container.innerHTML = this.generateDatalistOptionsHtml();
-				}
+				this.refresh();
 			}
+		}
+	};
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	Autocomplete.prototype.refresh = function() {
+		this.cache = {};
+		
+		if (datalistSupported && this.options.useNativeInterface) {
+			this.container.innerHTML = this.generateDatalistOptionsHtml();
+		} else if (this.highlightIdx === -1) {
+			this.matchValue(this.lastValue);
 		}
 	};
 	

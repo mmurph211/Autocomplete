@@ -75,6 +75,29 @@ following initialization code in Javascript:
 
 See the demo source code for a full example.
 
+Ajax Support
+------------
+
+As the user enters their value into the text field, it is possible to tie in roundtrip server requests via 
+Ajax to populate the autocomplete options. To do this, use the onInput option:  
+
+    new Autocomplete("myInput", {
+        srcType : "dom", 
+        onInput : function(newValue, oldValue) {
+            var autocomplete = this;
+            sendAjaxRequest(newValue, function(values) {
+                // Execute callback:
+                autocomplete.addValues(values);
+            });
+        }
+    });
+
+The `addValues` method will take care of the rest.  
+
+Please note that some browsers such as Chrome v25 do not update the displayed list of choices (until you 
+change the text field value) if using the native UI. It is therefore recommended that if you plan on using 
+Ajax with the autocomplete code, you should for now set useNativeInterface to `false`.
+
 Options
 -------
 
