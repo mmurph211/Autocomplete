@@ -20,25 +20,7 @@
 				this.throttle = -1;
 				this.usesTouch = (window.ontouchstart !== undefined);
 				this.values = [];
-				this.options = {
-					useNativeInterface : true, 
-					offsetTop : 0, 
-					offsetLeft : 0, 
-					highlightColor : "#ffffff", 
-					highlightBgColor : "#3399ff", 
-					srcType : "", // "array", "dom", "xml"
-					srcData : "", 
-					onInput : this.nothing
-				};
-				
-				if (options) {
-					for (var option in this.options) {
-						if (options[option] !== undefined) {
-							this.options[option] = options[option];
-						}
-					}
-				}
-				
+				this.setOptions(options);
 				this.init();
 			}
 		}
@@ -46,6 +28,31 @@
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	Autocomplete.prototype.nothing = function(){};
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	Autocomplete.prototype.setOptions = function(options) {
+		var hasOwnProp = Object.prototype.hasOwnProperty, 
+		    option;
+		
+		this.options = {
+			useNativeInterface : true, 
+			offsetTop : 0, 
+			offsetLeft : 0, 
+			highlightColor : "#ffffff", 
+			highlightBgColor : "#3399ff", 
+			srcType : "", // "array", "dom", "xml"
+			srcData : "", 
+			onInput : this.nothing
+		};
+		
+		if (options) {
+			for (option in this.options) {
+				if (hasOwnProp.call(this.options, option) && options[option] !== undefined) {
+					this.options[option] = options[option];
+				}
+			}
+		}
+	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	Autocomplete.prototype.init = function() {
@@ -250,20 +257,18 @@
 		    matches = [], m = 0;
 		
 		if (!datalistSupported || !this.options.useNativeInterface) {
-			if (val) {
-				if (!(results = this.cache["r-" + val])) {
-					// Find all matching values:
-					escapeRgx = this.cache.escapeRgx || (this.cache.escapeRgx = /([-.*+?^${}()|[\]\/\\])/g);
-					matchRgx = new RegExp("^(" + val.replace(escapeRgx, "\\$1") + ".*)$", "igm");
-					matchText = this.cache.values || (this.cache.values = this.values.join("\n"));
-					
-					while ((matchResult = (matchRgx.exec(matchText) || [])[0])) {
-						if (val !== matchResult) {
-							matches[m++] = matchResult;
-						}
+			if (val && !(results = this.cache["r-" + val])) {
+				// Find all matching values:
+				escapeRgx = this.cache.escapeRgx || (this.cache.escapeRgx = /([-.*+?^${}()|[\]\/\\])/g);
+				matchRgx = new RegExp("^(" + val.replace(escapeRgx, "\\$1") + ".*)$", "igm");
+				matchText = this.cache.values || (this.cache.values = this.values.join("\n"));
+				
+				while ((matchResult = (matchRgx.exec(matchText) || [])[0])) {
+					if (val !== matchResult) {
+						matches[m++] = matchResult;
 					}
-					results = (this.cache["r-" + val] = matches.sort().slice(0, 6));
 				}
+				results = (this.cache["r-" + val] = matches.sort().slice(0, 6));
 			}
 			if (results && results.length) {
 				this.showValues(results);
