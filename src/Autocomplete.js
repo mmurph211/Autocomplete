@@ -7,6 +7,7 @@
 (function(window, document, undefined) {
 	"use strict";
 	
+	var AutocompleteProto;
 	var Autocomplete = function(element, options) {
 		if ((this.element = (typeof(element) === "string") ? $(element) : element)) {
 			if ((this.element.tagName || "").toLowerCase() === "input") {
@@ -27,10 +28,10 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.nothing = function(){};
+	(AutocompleteProto = Autocomplete.prototype).nothing = function(){};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.setOptions = function(options) {
+	AutocompleteProto.setOptions = function(options) {
 		var hasOwnProp = Object.prototype.hasOwnProperty, 
 		    option;
 		
@@ -55,7 +56,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.init = function() {
+	AutocompleteProto.init = function() {
 		var srcType = this.options.srcType, 
 		    datalist, datalistId, boundSetElementFocus;
 		
@@ -90,7 +91,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.getDomValues = function() {
+	AutocompleteProto.getDomValues = function() {
 		var datalistId = this.element.getAttribute("list"), 
 		    container = (datalistId) ? ($(datalistId) || {}).parentNode : null, 
 		    options = (container) ? container.getElementsByTagName("option") : [], 
@@ -106,7 +107,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.getXmlValues = function() {
+	AutocompleteProto.getXmlValues = function() {
 		var xml = parseXML(this.options.srcData), 
 		    nodes, node, n, value, v, 
 		    values = [];
@@ -123,7 +124,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.setDatalist = function() {
+	AutocompleteProto.setDatalist = function() {
 		var datalistId = this.element.getAttribute("list"), 
 		    container = (this.container = (datalistId && $(datalistId)));
 		
@@ -140,7 +141,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.generateDatalistOptionsHtml = function() {
+	AutocompleteProto.generateDatalistOptionsHtml = function() {
 		if (this.values.length) {
 			return "<option value=\"" + this.values.join("\"><option value=\"") + "\">";
 		}
@@ -148,7 +149,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.setElementFocus = function(event) {
+	AutocompleteProto.setElementFocus = function(event) {
 		var isFocusEvent = (((event || window.event).type || "").toLowerCase() === "focus");
 		
 		if ((this.elementHasFocus = isFocusEvent)) {
@@ -163,7 +164,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.generateContainer = function() {
+	AutocompleteProto.generateContainer = function() {
 		var wrapper = document.createElement("div"), 
 		    container = (this.container = document.createElement("div")), 
 		    cStyle, eStyle, wDisplay;
@@ -201,7 +202,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.addInputListeners = function(event) {
+	AutocompleteProto.addInputListeners = function(event) {
 		var boundToggleSelectionChangeEvent;
 		
 		// Monitor the text field value as it changes:
@@ -222,7 +223,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.toggleSelectionChangeEvent = function(event) {
+	AutocompleteProto.toggleSelectionChangeEvent = function(event) {
 		// Used by MSIE 9 to fill missing parts of oninput event implementation:
 		if (event.type === "focus") {
 			addEvent(document, "selectionchange", this.boundCheckValue);
@@ -232,7 +233,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.checkForValuePropertyChange = function() {
+	AutocompleteProto.checkForValuePropertyChange = function() {
 		// Used by MSIE < 9 to simulate oninput event:
 		if (this.elementHasFocus && window.event.propertyName === "value") {
 			this.checkValue(window.event);
@@ -240,7 +241,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.checkValue = function(event) {
+	AutocompleteProto.checkValue = function(event) {
 		var newValue = this.element.value, 
 		    lastValue = this.lastValue;
 		
@@ -252,7 +253,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.matchValue = function(val) {
+	AutocompleteProto.matchValue = function(val) {
 		var escapeRgx, matchResult, matchRgx, matchText, results, 
 		    matches = [], m = 0;
 		
@@ -279,7 +280,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.performKeyAction = function(event) {
+	AutocompleteProto.performKeyAction = function(event) {
 		var which = (event = event || window.event).which || event.keyCode, 
 		    actionable = { 9 : 1, 13 : 1, 27 : 1, 38 : 1, 40 : 1 }, 
 		    container, shownValuesLen;
@@ -318,7 +319,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.showValues = function(values) {
+	AutocompleteProto.showValues = function(values) {
 		var html = [], h = 0, 
 		    rRgx = /</g, 
 		    rStr = "&lt;", 
@@ -338,7 +339,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.highlightValue = function(event) {
+	AutocompleteProto.highlightValue = function(event) {
 		var target, targetClass, targetStyle, highlightIdx;
 		
 		if (this.usesTouch || (this.throttle++) & 1) {
@@ -357,7 +358,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.setHighlightedIndex = function(highlightIdx) {
+	AutocompleteProto.setHighlightedIndex = function(highlightIdx) {
 		var choices, choiceStyle;
 		
 		if ((highlightIdx = Math.max(-1, highlightIdx)) !== this.highlightIdx) {
@@ -385,7 +386,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.selectValue = function(event) {
+	AutocompleteProto.selectValue = function(event) {
 		var eventType = (event = event || window.event).type.toLowerCase(), 
 		    returnFocus = eventType !== "keydown" || (event.which || event.keyCode) !== 9, 
 		    target, highlightIdx;
@@ -411,7 +412,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.clearValues = function() {
+	AutocompleteProto.clearValues = function() {
 		this.highlightIdx = -1;
 		this.lastValue = "";
 		this.shownValues = [];
@@ -419,7 +420,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.addValues = function(values) {
+	AutocompleteProto.addValues = function(values) {
 		var currentValues, cLen, c;
 		
 		if (values && values.length) {
@@ -437,7 +438,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.removeValues = function(values) {
+	AutocompleteProto.removeValues = function(values) {
 		var currentValues, cLen, c, idx;
 		
 		if (values && values.length) {
@@ -455,7 +456,7 @@
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	Autocomplete.prototype.refresh = function() {
+	AutocompleteProto.refresh = function() {
 		this.cache = {};
 		
 		if (datalistSupported && this.options.useNativeInterface) {
@@ -526,17 +527,9 @@
 	  function(elem, type, listener) { elem.detachEvent("on" + type, listener); };
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	var bind = function(func, that, args) {
-		var args = [].concat(args || []), 
-		    a = args.length;
-		
-		return function() {
-			if (a || arguments.length) {
-				for (var i=0, arg; arg=arguments[i]; i++) { args[a+i] = arg; }
-				return func.apply(that, args);
-			}
-			return func.call(that);
-		};
+	var bind = function(func, that) {
+		var a = slice.call(arguments, 2);
+		return function() { return func.apply(that, a.concat(slice.call(arguments))); };
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
@@ -551,6 +544,7 @@
 	    datalistSupported = !!(("list" in document.createElement("input")) && 
 	                           document.createElement("datalist") && 
 	                           window.HTMLDataListElement), 
+	    slice = Array.prototype.slice, 
 	    msie = getIEVersion();
 	
 	// Expose:
