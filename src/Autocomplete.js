@@ -262,14 +262,15 @@
 				// Find all matching values:
 				escapeRgx = this.cache.escapeRgx || (this.cache.escapeRgx = /([-.*+?^${}()|[\]\/\\])/g);
 				matchRgx = new RegExp("^(" + val.replace(escapeRgx, "\\$1") + ".*)$", "igm");
-				matchText = this.cache.values || (this.cache.values = this.values.join("\n"));
+				matchText = this.cache.values || (this.cache.values = this.values.sort().join("\n"));
 				
 				while ((matchResult = (matchRgx.exec(matchText) || [])[0])) {
 					if (val !== matchResult) {
 						matches[m++] = matchResult;
+						if (m === 6) { break; }
 					}
 				}
-				results = (this.cache["r-" + val] = matches.sort().slice(0, 6));
+				results = (this.cache["r-" + val] = matches);
 			}
 			if (results && results.length) {
 				this.showValues(results);
