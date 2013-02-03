@@ -122,29 +122,39 @@ Default is `true`.
 **offsetTop**
 Integer. If the autocomplete dropdown is not displaying directly under the `input` field, adjust this 
 option to change the dropdown's vertical position. Negative integers also accepted. If a browser is using 
-its native autocomplete interface, this option is ignored.  
+its native autocomplete interface this option is ignored.  
 Default is `0`.
 
 **offsetLeft**
 Integer. If the autocomplete dropdown is not displaying directly aligned with the `input` field, adjust 
 this option to change the dropdown's horizontal position. Negative integers also accepted. If a browser is 
-using its native autocomplete interface, this option is ignored.  
+using its native autocomplete interface this option is ignored.  
 Default is `0`.
+
+**maxChoices**
+Integer. The maximum number of autocomplete choices to display. If a browser is using its native autocomplete 
+interface this option is ignored.  
+Default is `6`.
 
 **highlightColor**  
 String. The color value to set as the text color for highlighted autocomplete values. If a browser is using 
-its native autocomplete interface, this option is ignored.  
+its native autocomplete interface this option is ignored.  
 Default is `"#ffffff"`.
 
 **highlightBgColor**  
 String. The color value to set as the background color for highlighted autocomplete values. If a browser is 
-using its native autocomplete interface, this option is ignored.  
+using its native autocomplete interface this option is ignored.  
 Default is `"#3399ff"`.
 
 **onInput**
 Function. Called when user changes the text field value. Returned in `arguments` are the new value and last 
 value prior to the change.  
 Default is a function that does nothing.
+
+**onInputDelay**
+Integer. The time to wait in milliseconds after the user stops typing before firing the `onInput` function. 
+This can be a useful option to throttle Ajax requests.  
+Default is `0`.
 
 Future Features
 ---------------

@@ -14,9 +14,11 @@
 				this.boundCheckValue = bind(this.checkValue, this);
 				this.cache = {};
 				this.container = null;
+				this.delayTimer = null;
 				this.elementHasFocus = false;
 				this.highlightIdx = -1;
 				this.lastValue = "";
+				this.lastOnInputValue = null;
 				this.shownValues = [];
 				this.throttle = -1;
 				this.usesTouch = (window.ontouchstart !== undefined);
@@ -39,11 +41,13 @@
 			useNativeInterface : true, 
 			offsetTop : 0, 
 			offsetLeft : 0, 
+			maxChoices : 6, 
 			highlightColor : "#ffffff", 
 			highlightBgColor : "#3399ff", 
 			srcType : "", // "array", "dom", "xml"
 			srcData : "", 
-			onInput : this.nothing
+			onInput : this.nothing, 
+			onInputDelay : 0
 		};
 		
 		if (options) {
@@ -243,18 +247,32 @@
 	//////////////////////////////////////////////////////////////////////////////////
 	AutocompleteProto.checkValue = function(event) {
 		var newValue = this.element.value, 
-		    lastValue = this.lastValue;
+		    lastValue = this.lastValue, 
+		    delay;
 		
 		if (newValue !== lastValue) {
 			this.matchValue(newValue);
-			this.options.onInput.apply(this, [newValue, lastValue]);
+			
+			// Trigger onInput instantly or set a timer:
+			if ((delay = this.options.onInputDelay) > 0) {
+				if (this.lastOnInputValue === null) {
+					this.lastOnInputValue = lastValue;
+				}
+				this.delayTimer = (this.delayTimer) ? window.clearTimeout(this.delayTimer) : null;
+				this.delayTimer = window.setTimeout(bind(function() {
+					this.options.onInput.apply(this, [newValue, this.lastOnInputValue]);
+					this.lastOnInputValue = null;
+				}, this), delay);
+			} else {
+				this.options.onInput.apply(this, [newValue, lastValue]);
+			}
 			this.lastValue = newValue;
 		}
 	};
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	AutocompleteProto.matchValue = function(val) {
-		var escapeRgx, matchResult, matchRgx, matchText, results, 
+		var escapeRgx, matchResult, matchRgx, matchText, maxChoices, results, 
 		    matches = [], m = 0;
 		
 		if (!datalistSupported || !this.options.useNativeInterface) {
@@ -263,11 +281,12 @@
 				escapeRgx = this.cache.escapeRgx || (this.cache.escapeRgx = /([-.*+?^${}()|[\]\/\\])/g);
 				matchRgx = new RegExp("^(" + val.replace(escapeRgx, "\\$1") + ".*)$", "igm");
 				matchText = this.cache.values || (this.cache.values = this.values.sort().join("\n"));
+				maxChoices = this.options.maxChoices;
 				
 				while ((matchResult = (matchRgx.exec(matchText) || [])[0])) {
 					if (val !== matchResult) {
 						matches[m++] = matchResult;
-						if (m === 6) { break; }
+						if (m === maxChoices) { break; }
 					}
 				}
 				results = (this.cache["r-" + val] = matches);
